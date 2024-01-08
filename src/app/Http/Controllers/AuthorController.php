@@ -11,7 +11,7 @@ class AuthorController extends Controller
     // データ一覧ページの表示
     public function index()
     {
-        $authors = Author::all();
+        $authors = Author::Paginate(4);
         return view('index', ['authors' => $authors]);
     }
 
@@ -36,7 +36,7 @@ class AuthorController extends Controller
     }
 
     // 更新機能
-    public function update(Request $request)
+    public function update(AuthorRequest $request)
     {
         $form = $request->all();
         unset($form['_token']);
@@ -57,5 +57,18 @@ class AuthorController extends Controller
         Author::find($request->id)->delete();
         return redirect('/');
     }
+
+    public function verror()
+    {
+    return view('verror');
+    }
+
+    public function relate(Request $request) //追記
+{
+    $hasItems = Author::has('book')->get();
+    $noItems = Author::doesntHave('book')->get();
+    $param = ['hasItems' => $hasItems, 'noItems' => $noItems];
+    return view('author.index',$param);
+}
 
 }
